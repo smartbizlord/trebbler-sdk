@@ -12,7 +12,7 @@ class LoadBalancer {
     }
 
     balanced() {
-        const indexer = Math.floor(Math.random() * endpoints.length)
+        const indexer = Math.floor(Math.random() * this.endpoints.length)
         return this.endpoints[indexer]
     }
 

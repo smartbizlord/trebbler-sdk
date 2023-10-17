@@ -88,7 +88,7 @@ function trebbler(something, other, customMaskFields) {
         
             try {
                 console.log(payload, "payload to be sent")
-                // new Sender("").send(payload)
+                new Sender("").send(payload)
             } catch (e) {
                 console.log(e, "sdk caught error")
             }

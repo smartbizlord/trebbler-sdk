@@ -7,7 +7,8 @@ const trebbler = require('../index')
 app.use(trebbler())
 
 app.get("/example", (req, res) => {
-    res.send({message: "it works"})
+    // res.send({message: "it works"})
+    res.send("it works")
 })
 
 app.listen(3008, () => {

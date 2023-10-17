@@ -37,7 +37,7 @@ class Masker {
         console.log(data, "make we see")
         if(data == null || data == undefined) return null
         if(typeof data !== 'object') return data
-        if(Object.keys(data).length = 0) return null
+        if(Object.keys(data).length == 0) return null
     
         const targetObj = {
             ...data,
@@ -127,10 +127,11 @@ class Masker {
                 data = this.objectMaskers(responseBody)
             }
         } catch (err) {
+            console.log(err, "error")
             error = {
-                source: "",
-                type: "",
-                message: "",
+                source: "response",
+                type: "invalid",
+                message: "the response could not be parsed as JSON",
                 file: null,
                 line: null,
             }

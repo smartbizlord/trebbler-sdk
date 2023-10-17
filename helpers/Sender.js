@@ -47,7 +47,7 @@ class Sender {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': this.apiKey
+                    // 'x-api-key': this.apiKey
                 }
             }
         ).then(() => console.log("request successful"))
