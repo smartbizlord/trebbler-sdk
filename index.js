@@ -8,7 +8,7 @@ const LoadBalancer = require('./helpers/LoadBalancer');
 
 
 
-function trebbler(something, other, customMaskFields) {
+function trebbler(apiKey, projectId, customMaskFields, debug = false) {
     // 
     const mumu  = "dddd"
     // next(mumu)
@@ -29,8 +29,27 @@ function trebbler(something, other, customMaskFields) {
             const body = req.body || {}
             const query = req.query || {}
             const requestPayload = { ...body, ...query }
+            const sender = new Sender(apiKey)
+            const resSize = res.get('content-length');
+            // const processedHeaderArr = (req.headers.accept)//.split("',") || []
+            // let reqHeaders = {}
+            // // processedHeaderArr.reduce(function(obj, key) {
+            // //     // 
+            // //     let data = key.split(": ")
+            // //     obj[data[0]] = obj[data[1]]
+            // //     return obj
+            // // }, {})
+            const processedHeaders = {
+                "content-type": req.headers["content-type"],
+                "content-length": req.headers["content-length"],
+                "user-agent": req.headers["user-agent"],
+                "host": req.headers.host,
+            }
             
-            const maskedRequestData = new Masker(requestPayload, customMaskFields).objectMaskers()
+            let maskedRequestData
+            if(Object.keys(body).length > 0) { maskedRequestData = new Masker(requestPayload, customMaskFields).objectMaskers()}
+            if(Object.keys(body).length == 0) { maskedRequestData = {}}
+            
             
             const [maskedResponseData, error] = new Masker("", customMaskFields).maskedResponse(res.__response)
         
@@ -39,23 +58,26 @@ function trebbler(something, other, customMaskFields) {
             }
         
             let request = {
+                timestamp: new Date().toISOString().replace('T', ' ').substr(0, 19),
                 ip: req.ip,
                 url: `${req.protocol}://${req.headers['host']}${req.originalUrl}`,
                 user_agent: req.headers['user-agent'],
                 method: req.method,
-                headers: new Masker(req.headers, customMaskFields).objectMaskers(),
+                headers: new Masker(processedHeaders, customMaskFields).objectMaskers(),
                 body: maskedRequestData,
             }
         
             let response = {
                 headers: new Masker(res.getHeaders(), customMaskFields).objectMaskers(),
                 code: res.statusCode,
-                size: res.get('content-length'),
+                size: resSize,
                 load_time: new LoadBalancer().getDurationInMilliseconds(start),
                 body: maskedResponseData,
             }
+            console.log(maskedResponseData, "masked response body")
         
             let server = {
+                ip: req.ip,
                 protocol : `${req.protocol}/${req.httpVersion}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 os: {
@@ -65,6 +87,7 @@ function trebbler(something, other, customMaskFields) {
                 },
                 software: null,
                 signature: null,
+                encoding: req.headers['accept-encoding'],
             }
         
             let language = {
@@ -73,8 +96,8 @@ function trebbler(something, other, customMaskFields) {
             }
         
             const payload = {
-                api_key: "",
-                project_id: "",
+                api_key: apiKey,
+                project_id: projectId,
                 sdk: "express",
                 version,
                 data: {
@@ -85,10 +108,30 @@ function trebbler(something, other, customMaskFields) {
                     errors
                 }
             }
+
+            let debugPayload = new Masker().debugParser(payload)
+            debugPayload.data.response.size = 'number'
+            // let newdebugd = {
+            //     ...debugPayload
+            // }
+            // newdebugd.data = debugPayload.data || {}
+            // newdebugd.data.response = debugPayload.data.response || {}
+            // newdebugd.data.response.size = 4
+            console.log(payload, "wahalurd")
+            console.log(payload.data.server.os, "operating system")
+            console.log(payload.data.request.headers, "Request headers")
+            console.log(payload.data.response.headers, "response headers")
+            // console.log(processedHeaderArr, "lets see")
+            // console.log(reqHeaders, "lets see")
         
             try {
-                console.log(payload, "payload to be sent")
-                new Sender("").send(payload)
+                if(debug) {
+                    sender.sendDebug(payload)
+                    // new Sender("").sendDebug(debugPayload)
+                } else {
+                    sender.send(payload)
+                }
+                // console.log(debugPayload, "payload to be sent")
             } catch (e) {
                 console.log(e, "sdk caught error")
             }

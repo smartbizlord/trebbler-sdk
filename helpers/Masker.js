@@ -44,6 +44,9 @@ class Masker {
         }
         this.targetObj = targetObj
         const maskedFields = this.maskFields
+        const masker = this.masker
+        const objectMaskers = this.objectMaskers
+        const arrayMaskers = this.arrayMaskers
         const maskedObj = Object.keys(targetObj).reduce(function (obj, key) {
             if(typeof targetObj[key] == 'string') {
                 if(maskedFields.includes(key)) {
@@ -86,6 +89,36 @@ class Masker {
                 return this.objectMaskers(value)
             }
         })
+    }
+
+    debugParser(data) {
+        if(data == null) return 'null'
+        if(data == undefined) return 'undefined'
+        if(typeof data !== 'object') return typeof data
+        if(Array.isArray(data)) return 'array'
+        if(Object.keys(data).length == 0) return 'null'
+        console.log(typeof data)
+        // const debugParserOriginal = this.debugParser
+        // const debugParser = function() {
+        //     // 
+        //     this.debugParser = debugParserOriginal
+        //     debugParserOriginal.call(this)
+        // }
+        const debugParser = new Masker().debugParser
+        
+        return Object.keys(data).reduce(function (obj, key) {
+            if(typeof data[key] == 'object' && !Array.isArray(data[key])) {
+                obj[key] = debugParser(data[key])
+            }
+            else if(Array.isArray(data[key])) {
+                obj[key] = 'array'
+            }
+            else {
+                obj[key] = typeof data[key]
+            }
+        
+            return obj
+        }, {})
     }
     
     asserter(obj, key) {
