@@ -34,7 +34,7 @@ class Masker {
     
     
     objectMaskers(data = this.targetObj) {
-        console.log(data, "make we see")
+        // console.log(data, "make we see")
         if(data == null || data == undefined) return null
         if(typeof data !== 'object') return data
         if(Object.keys(data).length == 0) return null
@@ -97,7 +97,7 @@ class Masker {
         if(typeof data !== 'object') return typeof data
         if(Array.isArray(data)) return 'array'
         if(Object.keys(data).length == 0) return 'null'
-        console.log(typeof data)
+        // console.log(typeof data)
         // const debugParserOriginal = this.debugParser
         // const debugParser = function() {
         //     // 
@@ -145,7 +145,7 @@ class Masker {
     maskedResponse(responseBody) {
         // 
         let data = null, error = null;
-        console.log(responseBody, "response body")
+        // console.log(responseBody, "response body")
         try {
             if (Buffer.isBuffer(responseBody)) {
                 responseBody = responseBody.toString('utf-8')
@@ -160,7 +160,7 @@ class Masker {
                 data = this.objectMaskers(responseBody)
             }
         } catch (err) {
-            console.log(err, "error")
+            // console.log(err, "error")
             error = {
                 source: "response",
                 type: "invalid",

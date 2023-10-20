@@ -6,12 +6,21 @@ const LoadBalancer = require('./helpers/LoadBalancer');
 
 
 
-
+/**
+ * 
+ * @param {string} apiKey 
+ * @param {string} projectId 
+ * @param {array<string>} customMaskFields 
+ * @param {boolean} debug 
+ * @returns 
+ */
 
 function trebbler(apiKey, projectId, customMaskFields, debug = false) {
     // 
     const mumu  = "dddd"
     // next(mumu)
+
+    
     return function(req, res, next) {
         // 
         let oldSend = res.send;
@@ -74,10 +83,10 @@ function trebbler(apiKey, projectId, customMaskFields, debug = false) {
                 load_time: new LoadBalancer().getDurationInMilliseconds(start),
                 body: maskedResponseData,
             }
-            console.log(maskedResponseData, "masked response body")
+            // console.log(maskedResponseData, "masked response body")
         
             let server = {
-                ip: req.ip,
+                ip: req.connection.remoteAddress,
                 protocol : `${req.protocol}/${req.httpVersion}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 os: {
@@ -117,10 +126,10 @@ function trebbler(apiKey, projectId, customMaskFields, debug = false) {
             // newdebugd.data = debugPayload.data || {}
             // newdebugd.data.response = debugPayload.data.response || {}
             // newdebugd.data.response.size = 4
-            console.log(payload, "wahalurd")
-            console.log(payload.data.server.os, "operating system")
-            console.log(payload.data.request.headers, "Request headers")
-            console.log(payload.data.response.headers, "response headers")
+            // console.log(payload, "wahalurd")
+            // console.log(payload.data.server.os, "operating system")
+            // console.log(payload.data.request.headers, "Request headers")
+            // console.log(payload.data.response.headers, "response headers")
             // console.log(processedHeaderArr, "lets see")
             // console.log(reqHeaders, "lets see")
         
@@ -204,8 +213,8 @@ function finishListener(req, res) {
     }
 
     try {
-        console.log(payload, "payload to be sent")
-        // new Sender("").send(payload)
+        // console.log(payload, "payload to be sent")
+        new Sender("").send(payload)
     } catch (e) {
         console.log(e, "sdk caught error")
     }

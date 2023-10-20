@@ -126,10 +126,37 @@ Here are some ways of contributing to making Treblle better:
 - Join our [Discord](https://treblle.com/chat) and connect with other members to share and learn from.
 - Send a pull request to any of our [open source repositories](https://github.com/Treblle) on Github. Check the contribution guide on the repo you want to contribute to for more details about how to contribute. We're looking forward to your contribution!
 
-### Contributors
-<!-- Replace link with the link of the SDK contributors-->
-<a href="https://github.com/Treblle/treblle-sails/graphs/contributors">
-  <p align="center">
-    <img  src="https://contrib.rocks/image?repo=Treblle/treblle-sails" alt="A table of avatars from the project's contributors" />
-  </p>
-</a>
+## Installation
+
+This library is available on npm, you can install it by running `npm install --save trebbler` or `yarn add trebbler`
+
+
+## Usage
+
+Below is an example showcasing how you can use the library to implement tracking of your API with Trebble.
+
+```javascript
+const express = require('express')
+const app = express()
+const trebbler = require('trebbler')
+
+app.use(trebbler(
+    process.env.API_KEY,
+    process.env.PROJECT_ID,
+))
+
+// to use debug mode pass in the dubug argument
+app.use(trebbler(
+    process.env.API_KEY,
+    process.env.PROJECT_ID,
+    true,
+))
+
+app.listen(PORT, () => {
+    console.log(`running on port ${PORT}`)
+})
+```
+
+## Future Support
+
+the upcoming version will have support for typescript to help developers to easily correct issues in their APIs that use typescript.

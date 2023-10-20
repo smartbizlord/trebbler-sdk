@@ -9,7 +9,7 @@ app.use(trebbler(
     process.env.PROJECT_ID,
 ))
 
-app.get("/example", (req, res) => {
+app.all("/example", (req, res) => {
     res.send({message: "it works"})
     // res.send("it works")
 })
